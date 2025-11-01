@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { sweets } from '../api';
 import { AuthContext } from '../context/AuthContext';
 
@@ -58,9 +59,18 @@ export default function Dashboard() {
       <header className="flex items-center justify-between mb-6">
         <h1 className="text-3xl">Sweets</h1>
         <div>
-          {auth.user ? <span className="mr-4">{auth.user.role}</span> : null}
-          {auth.user ? <button onClick={auth.logout} className="px-3 py-1 border rounded">Logout</button> : null}
-          {auth.user?.role === 'ADMIN' ? <button onClick={() => setShowCreate(true)} className="ml-3 px-3 py-1 bg-brand-400 text-white rounded">Add sweet</button> : null}
+          {auth.user ? (
+            <>
+              <span className="mr-4">{auth.user.role}</span>
+              <button onClick={auth.logout} className="px-3 py-1 border rounded">Logout</button>
+              {auth.user?.role === 'ADMIN' ? <button onClick={() => setShowCreate(true)} className="ml-3 px-3 py-1 bg-brand-400 text-white rounded">Add sweet</button> : null}
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="px-3 py-1 border rounded mr-2">Login</Link>
+              <Link to="/register" className="px-3 py-1 border rounded">Register</Link>
+            </>
+          )}
         </div>
       </header>
 
