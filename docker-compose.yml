@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - ./backend/.env.docker
+    environment:
+      - DATABASE_URL=file:/app/prisma/dev.db
+    ports:
+      - '4000:4000'
+    volumes:
+      - backend_data:/app/prisma
+    depends_on: []
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://backend:4000/api
+    ports:
+      - '5173:80'
+    depends_on:
+      - backend
+
+volumes:
+  backend_data:

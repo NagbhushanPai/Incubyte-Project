@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+.dockerignore
+Dockerfile
+dist
+coverage
+.vscode
+.idea
