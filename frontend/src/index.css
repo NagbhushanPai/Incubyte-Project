@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles preserved and integrated with Tailwind */
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+
+  html, body, #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-brand-50 text-gray-900 font-sans;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    @apply font-medium text-brand-400 no-underline;
+  }
+
+  h1 {
+    @apply text-4xl font-semibold leading-tight;
+  }
+
+  button {
+    @apply rounded-md border-0 px-4 py-2 text-sm font-medium bg-brand-300 text-white hover:bg-brand-400 focus:outline-none focus:ring-4;
+  }
+}
