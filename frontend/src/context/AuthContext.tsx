@@ -1,45 +1,60 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { auth as apiAuth } from '../api';
+import { AuthContext } from './AuthContext';
+import type { AuthContextValue, AuthResponse, AuthUser } from '../types';
 
-export const AuthContext = createContext<any>(null);
+const decodeToken = (token: string): AuthUser | null => {
+  try {
+    const [, payload] = token.split('.');
+    if (!payload) return null;
+    const decoded = JSON.parse(atob(payload)) as { userId?: string; role?: AuthUser['role'] };
+    if (!decoded.userId || !decoded.role) return null;
+    return { id: decoded.userId, role: decoded.role };
+  } catch {
+    return null;
+  }
+};
 
-export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
-    if (token) {
-      // naive decode (not secure) to get role/userId if needed
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setUser({ id: payload.userId, role: payload.role });
-      } catch { setUser(null); }
-    } else {
-      setUser(null);
-    }
+    setUser(token ? decodeToken(token) : null);
   }, [token]);
 
-  const login = async (email: string, password: string) => {
-    const res: any = await apiAuth.login(email, password);
-    if (res?.token) {
-      localStorage.setItem('token', res.token);
-      setToken(res.token);
+  const persistToken = useCallback((value: string | null) => {
+    if (value) {
+      localStorage.setItem('token', value);
+    } else {
+      localStorage.removeItem('token');
+    }
+    setToken(value);
+  }, []);
+
+  const login = useCallback<AuthContextValue['login']>(async (email, password) => {
+    const res: AuthResponse = await apiAuth.login(email, password);
+    if (res.token) {
+      persistToken(res.token);
       return true;
     }
     return false;
-  };
+  }, [persistToken]);
 
-  const register = async (email: string, password: string, name?: string) => {
-    const res: any = await apiAuth.register(email, password, name);
-    if (res?.token) {
-      localStorage.setItem('token', res.token);
-      setToken(res.token);
+  const register = useCallback<AuthContextValue['register']>(async (email, password, name) => {
+    const res: AuthResponse = await apiAuth.register(email, password, name);
+    if (res.token) {
+      persistToken(res.token);
       return true;
     }
     return false;
-  };
+  }, [persistToken]);
 
-  const logout = () => { localStorage.removeItem('token'); setToken(null); };
+  const logout = useCallback(() => {
+    persistToken(null);
+  }, [persistToken]);
 
-  return <AuthContext.Provider value={{ token, user, login, register, logout }}>{children}</AuthContext.Provider>;
+  const value = useMemo<AuthContextValue>(() => ({ token, user, login, register, logout }), [login, logout, register, token, user]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
