@@ -21,6 +21,11 @@ async function main() {
       { name: 'Chocolate Bar', category: 'Chocolate', price: 1.99, quantity: 50 },
       { name: 'Gummy Bears', category: 'Gummies', price: 0.99, quantity: 100 },
       { name: 'Sour Worms', category: 'Gummies', price: 1.49, quantity: 30 },
+      { name: 'Caramel Fudge', category: 'Fudge', price: 2.49, quantity: 25 },
+      { name: 'Strawberry Macaron', category: 'Pastry', price: 3.19, quantity: 18 },
+      { name: 'Lemon Tartlet', category: 'Pastry', price: 2.89, quantity: 20 },
+      { name: 'Vanilla Cupcake', category: 'Cupcake', price: 2.59, quantity: 28 },
+      { name: 'Dark Chocolate Truffle', category: 'Chocolate', price: 3.49, quantity: 15 },
     ] });
     console.log('Seeded sweets');
   }
