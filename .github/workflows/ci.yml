@@ -8,6 +8,8 @@ on:
 jobs:
   backend-tests:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "file:./test.db"
     defaults:
       run:
         working-directory: backend
@@ -45,6 +47,8 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "file:./test.db"
     needs: [backend-tests, frontend-build]
     steps:
       - uses: actions/checkout@v4
