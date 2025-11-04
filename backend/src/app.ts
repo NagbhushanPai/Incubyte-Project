@@ -6,6 +6,11 @@ import authRouter from './routes/auth';
 import sweetsRouter from './routes/sweets';
 
 dotenv.config();
+
+if (!process.env.DATABASE_URL) {
+	process.env.DATABASE_URL = process.env.NODE_ENV === 'test' ? 'file:./test.db' : 'file:./dev.db';
+}
+
 const app = express();
 export const prisma = new PrismaClient();
 
